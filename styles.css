@@ -1,0 +1,291 @@
+:root {
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --accent: #4f46e5;
+  --accent-soft: #eef2ff;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.05);
+  --shadow-hover: 0 4px 8px rgba(15, 23, 42, 0.1), 0 12px 24px rgba(15, 23, 42, 0.1);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Header — sticky bar matching the MathVibe Gallery header */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-bar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.brand img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.header-nav a {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.header-nav a:hover {
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* Hero */
+.hero {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 40px 0 0;
+}
+
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: 1.9rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 720px;
+  color: var(--text-muted);
+}
+
+/* Filter tabs */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 20px 0 16px;
+}
+
+.filter-btn {
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Sections */
+.group-section { padding-top: 36px; }
+
+.group-section h2 {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.group-desc {
+  margin: 0 0 20px;
+  color: var(--text-muted);
+  font-size: 0.925rem;
+}
+
+/* Card grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Live scaled-down iframe preview of the lesson */
+.preview {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
+  overflow: hidden;
+  display: block;
+}
+
+.preview iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* 20px wider than the 1280px scale basis so the page's own scrollbar is
+     clipped off the right edge of the card. */
+  width: 1300px;
+  height: 800px;
+  border: 0;
+  transform-origin: top left;
+  pointer-events: none; /* card click opens the lesson; no scrolling inside the thumbnail */
+  background: #fff;
+}
+
+.preview iframe {
+  z-index: 1;
+}
+
+.preview .placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 0.875rem;
+}
+
+/* Clickable overlay so the whole preview opens the lesson */
+.preview .overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.card-topic {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.card-title a { color: inherit; text-decoration: none; }
+.card-title a:hover { color: var(--accent); }
+
+.card-notes {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.card-footer {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.open-link {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 6px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.open-link:hover { background: #e0e7ff; }
+
+.empty-state {
+  padding: 80px 0;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* Footer */
+.site-footer {
+  margin-top: 64px;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 24px 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-bar .brand img { height: 32px; }
+.footer-bar p { margin: 0; }
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.5rem; }
+  .brand-label { display: none; }
+}
