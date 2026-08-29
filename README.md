@@ -5,7 +5,7 @@ studies, plus illustrative examples of the system's capabilities.
 
 ## Editing examples
 
-Edit **`examples.js`** only. The 36 user-study cards (12 participants × 3
+Edit **`examples.js`** only. The 54 user-study cards (18 participants × 3
 conditions) are generated automatically from the URL pattern
 `https://c{n}-{full|no-edits|no-design}.mathvibe.space/`.
 

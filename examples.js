@@ -3,7 +3,7 @@
 //
 // This is the ONLY file you need to edit.
 //
-// The user-study entries (12 participants × 3 conditions) are generated from
+// The user-study entries (18 participants × 3 conditions) are generated from
 // the URL pattern below:
 //   https://c{n}-full.mathvibe.space/
 //   https://c{n}-no-edits.mathvibe.space/
@@ -42,7 +42,7 @@ const GROUPS = {
   },
 };
 
-const PARTICIPANT_COUNT = 12;
+const PARTICIPANT_COUNT = 18;
 
 // Study conditions: URL suffix → group key (suffix is also the group key here).
 const CONDITIONS = ["full", "no-design", "no-edits"];
@@ -57,6 +57,13 @@ const TITLES = {
   "c5-full": "Perpendicular Bisectors and Midpoints",
   "c6-full": "Letters That Stand for Numbers",
   "c7-full": "Linear Feedback Shift Registers",
+  "c8-full": "Direct and Inverse Relationships",
+  "c9-full": "Multiplying Matrices",
+  "c10-full": "Multiplying Complex Numbers",
+  "c11-full": "Probability",
+  "c12-full": "Integration: Reversing Differentiation",
+  "c13-full": "Differential Equations",
+  "c14-full": "Rolling Two Dice",
   "c1-no-design": "The Unit Circle",
   "c2-no-design": "The Central Limit Theorem",
   "c3-no-design": "Angle Sums in Polygons",
@@ -64,6 +71,13 @@ const TITLES = {
   "c5-no-design": "Geometric Construction",
   "c6-no-design": "Letters for Numbers",
   "c7-no-design": "Linear Feedback Shift Registers",
+  "c8-no-design": "Choosing Between Two Deals",
+  "c9-no-design": "Working with Matrices",
+  "c10-no-design": "Multiplying Complex Numbers",
+  "c11-no-design": "By chance? or....?",
+  "c12-no-design": "Reversing Differentiation",
+  "c13-no-design": "Differential Equations",
+  "c14-no-design": "Tree Diagrams for Two-Stage Events",
   "c1-no-edits": "Trigonometry on the Unit Circle",
   "c2-no-edits": "The Central Limit Theorem",
   "c3-no-edits": "Angles in Triangles and Polygons",
@@ -71,7 +85,21 @@ const TITLES = {
   "c5-no-edits": "Geometric Construction",
   "c6-no-edits": "Letters Standing for Numbers",
   "c7-no-edits": "Linear Feedback Shift Registers",
-  // c8–c12: not published yet — add titles here once the sites are up.
+  "c8-no-edits": "Solving Problems with a Graph",
+  "c9-no-edits": "Multiplying Matrices",
+  "c10-no-edits": "Multiplying Complex Numbers",
+  "c11-no-edits": "Chance and Probability",
+  "c12-no-edits": "Integration: Running Differentiation Backwards",
+  "c13-no-edits": "Differential Equations",
+  "c14-no-edits": "Two Dice, One Total",
+  // c15–c18: not published yet — add titles here once the sites are up.
+};
+
+// One-off URL fixes, keyed by subdomain. c13-no-design was deployed with a
+// double-dash custom domain; remove this entry once the Pages domain is
+// corrected to c13-no-design.mathvibe.space.
+const URL_OVERRIDES = {
+  "c13-no-design": "https://c13--no-design.mathvibe.space/",
 };
 
 // Extra examples created for illustration (outside the study). Add freely.
@@ -124,7 +152,7 @@ for (const condition of CONDITIONS) {
     EXAMPLES.push({
       title: knownTitle || "Participant C" + n,
       topic: knownTitle ? "Participant C" + n : "",
-      url: "https://" + subdomain + ".mathvibe.space/",
+      url: URL_OVERRIDES[subdomain] || "https://" + subdomain + ".mathvibe.space/",
       group: condition,
       notes: "",
     });
