@@ -9,7 +9,8 @@
 //   https://c{n}-no-edits.mathvibe.space/
 //   https://c{n}-no-design.mathvibe.space/
 //
-// To show a real lesson title on a card, add it to TITLES keyed by subdomain.
+// Study cards show the participant's lesson topic (TOPICS below), which is
+// the same across all three conditions.
 // To add illustrative (non-study) examples, append to ILLUSTRATIVE_EXAMPLES.
 // ============================================================================
 
@@ -44,56 +45,33 @@ const GROUPS = {
 
 const PARTICIPANT_COUNT = 18;
 
+// Lesson topic per participant, shared across all three conditions.
+// Source: the study analysis participants data (MathVibeAnalysis/data/
+// participants.csv, "Topic" column), lightly normalized; where the sheet was
+// vague or empty (C16–C18) the topic is inferred from the deployed lessons.
+const TOPICS = {
+  1: "Trigonometry",
+  2: "Central Limit Theorem",
+  3: "Angles in Polygons",
+  4: "Trigonometry",
+  5: "Geometric Construction",
+  6: "Algebra",
+  7: "Linear Feedback Shift Registers",
+  8: "Algebra",
+  9: "Matrices",
+  10: "Complex Numbers",
+  11: "Probability",
+  12: "Integration",
+  13: "Differential Equations",
+  14: "Probability",
+  15: "Circle Theorems",
+  16: "Differentiation",
+  17: "Coordinate Geometry",
+  18: "Solving Equations",
+};
+
 // Study conditions: URL suffix → group key (suffix is also the group key here).
 const CONDITIONS = ["full", "no-design", "no-edits"];
-
-// Known lesson titles, keyed by subdomain. Cards without an entry here just
-// show the participant label until you fill the title in.
-const TITLES = {
-  "c1-full": "Trigonometry on the Unit Circle",
-  "c2-full": "One Number, One Shape",
-  "c3-full": "Angles in Polygons",
-  "c4-full": "Finding a Missing Side",
-  "c5-full": "Perpendicular Bisectors and Midpoints",
-  "c6-full": "Letters That Stand for Numbers",
-  "c7-full": "Linear Feedback Shift Registers",
-  "c8-full": "Direct and Inverse Relationships",
-  "c9-full": "Multiplying Matrices",
-  "c10-full": "Multiplying Complex Numbers",
-  "c11-full": "Probability",
-  "c12-full": "Integration: Reversing Differentiation",
-  "c13-full": "Differential Equations",
-  "c14-full": "Rolling Two Dice",
-  "c1-no-design": "The Unit Circle",
-  "c2-no-design": "The Central Limit Theorem",
-  "c3-no-design": "Angle Sums in Polygons",
-  "c4-no-design": "Finding a Missing Side",
-  "c5-no-design": "Geometric Construction",
-  "c6-no-design": "Letters for Numbers",
-  "c7-no-design": "Linear Feedback Shift Registers",
-  "c8-no-design": "Choosing Between Two Deals",
-  "c9-no-design": "Working with Matrices",
-  "c10-no-design": "Multiplying Complex Numbers",
-  "c11-no-design": "By chance? or....?",
-  "c12-no-design": "Reversing Differentiation",
-  "c13-no-design": "Differential Equations",
-  "c14-no-design": "Tree Diagrams for Two-Stage Events",
-  "c1-no-edits": "Trigonometry on the Unit Circle",
-  "c2-no-edits": "The Central Limit Theorem",
-  "c3-no-edits": "Angles in Triangles and Polygons",
-  "c4-no-edits": "Sine, Cosine and Tangent",
-  "c5-no-edits": "Geometric Construction",
-  "c6-no-edits": "Letters Standing for Numbers",
-  "c7-no-edits": "Linear Feedback Shift Registers",
-  "c8-no-edits": "Solving Problems with a Graph",
-  "c9-no-edits": "Multiplying Matrices",
-  "c10-no-edits": "Multiplying Complex Numbers",
-  "c11-no-edits": "Chance and Probability",
-  "c12-no-edits": "Integration: Running Differentiation Backwards",
-  "c13-no-edits": "Differential Equations",
-  "c14-no-edits": "Two Dice, One Total",
-  // c15–c18: not published yet — add titles here once the sites are up.
-};
 
 // One-off URL fixes, keyed by subdomain. c13-no-design was deployed with a
 // double-dash custom domain; remove this entry once the Pages domain is
@@ -148,10 +126,9 @@ const EXAMPLES = [];
 for (const condition of CONDITIONS) {
   for (let n = 1; n <= PARTICIPANT_COUNT; n++) {
     const subdomain = "c" + n + "-" + condition;
-    const knownTitle = TITLES[subdomain];
     EXAMPLES.push({
-      title: knownTitle || "Participant C" + n,
-      topic: knownTitle ? "Participant C" + n : "",
+      title: TOPICS[n] || "Participant C" + n,
+      topic: "Participant C" + n,
       url: URL_OVERRIDES[subdomain] || "https://" + subdomain + ".mathvibe.space/",
       group: condition,
       notes: "",
