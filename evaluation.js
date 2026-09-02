@@ -499,11 +499,6 @@
       header.appendChild(tabs);
     }
 
-    const openLink = el("a", "open-link", "Open in new tab ↗");
-    openLink.target = "_blank";
-    openLink.rel = "noopener";
-    header.appendChild(openLink);
-
     const frameWrap = el("div", "lesson-frame-wrap");
     frameWrap.appendChild(el("div", "frame-loading", "Loading lesson…"));
     const iframe = document.createElement("iframe");
@@ -515,7 +510,6 @@
       title.innerHTML = "";
       title.appendChild(document.createTextNode("Lesson " + lesson.label + " "));
       title.appendChild(el("span", "topic", "— " + lesson.topic + (setText ? " (" + setText + ")" : "")));
-      openLink.href = lesson.url;
       if (iframe.src !== lesson.url) iframe.src = lesson.url;
       if (tabs) {
         tabs.innerHTML = "";
