@@ -195,6 +195,7 @@ table.dash-table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
   vertical-align: baseline;
 }
 .dash-table .muted { color: var(--text-muted); }
+.dash-table td.top-pick { font-weight: 700; }
 .dash-table td.q-col { white-space: normal; min-width: 260px; }
 
 .status-pill {

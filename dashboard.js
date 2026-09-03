@@ -35,38 +35,38 @@
   const CONDITION_KEYS = ["full", "no-design", "no-edits"];
 
   const DIMENSIONS = [
-    { key: "pedagogical_quality", label: "Pedagogical Quality", items: ["pq1", "pq2", "pq3", "pq4"] },
-    { key: "mathematical_correctness", label: "Mathematical Correctness", items: ["mc1", "mc2", "mc3", "mc4"] },
-    { key: "visualization_quality", label: "Visualization Quality", items: ["vq1", "vq2", "vq3", "vq4"] },
-    { key: "interactive_explanation_quality", label: "Interactive Explanation Quality", items: ["ie1", "ie2", "ie3", "ie4"] },
+    { key: "pedagogical_quality", label: "Pedagogical Quality", items: ["q13", "q14", "q15", "q16"] },
+    { key: "mathematical_correctness", label: "Mathematical Correctness", items: ["q17", "q18", "q19", "q20"] },
+    { key: "visual_quality", label: "Visual Quality", items: ["q21", "q22", "q23", "q24"] },
+    { key: "interaction_quality", label: "Interaction Quality", items: ["q25", "q26", "q27", "q28"] },
   ];
 
   const ITEM_TEXT = {
-    pq1: "The lesson is appropriate for the intended grade level.",
-    pq2: "The lesson introduces concepts in a logical sequence.",
-    pq3: "The lesson encourages active exploration of the concept.",
-    pq4: "The relationship between the interactions and the mathematical ideas is clearly explained.",
-    mc1: "The mathematical concepts are presented accurately.",
-    mc2: "The formulas and equations are correct.",
-    mc3: "The visualizations accurately represent the underlying mathematics.",
-    mc4: "The lesson remains mathematically correct across all interaction states.",
-    vq1: "The lesson uses appropriate visualizations (e.g., graphs, diagrams, or simulations) for the concept being taught.",
-    vq2: "The visualizations are clear and easy to understand.",
-    vq3: "The visualizations are well designed (layout, colors, and labels).",
-    vq4: "The explanations in the lesson are clearly linked with the visualizations.",
-    ie1: "The interactive controls are relevant to the concept being taught.",
-    ie2: "Manipulating the controls helps reveal important mathematical relationships.",
-    ie3: "Changes in the visualization are easy to interpret.",
-    ie4: "The interactions help connect abstract mathematical ideas with their visual representations.",
+    q13: "The lesson is appropriate for the intended grade level.",
+    q14: "The lesson introduces concepts in a logical sequence.",
+    q15: "The relationship between the interactions and the mathematical ideas is clearly explained.",
+    q16: "The lesson clearly introduces the mathematical concept.",
+    q17: "The mathematical concepts are presented accurately.",
+    q18: "The formulas and equations are correct.",
+    q19: "The visualizations accurately represent the underlying mathematics.",
+    q20: "The lesson remains mathematically correct across all interaction states.",
+    q21: "The lesson used appropriate visualizations (e.g., graphs, diagrams or simulations).",
+    q22: "The visual design effectively highlights important mathematical concepts and relationships.",
+    q23: "The visual representation is clear and easy to understand.",
+    q24: "The lesson’s visualizations are accurate and free of errors.",
+    q25: "The interactive controls are relevant to the concept being taught.",
+    q26: "Manipulating the controls helps reveal important mathematical relationships.",
+    q27: "The interactions help connect abstract mathematical ideas with their visual representations.",
+    q28: "Changes in the visualization are easy to interpret.",
   };
   const ALL_ITEMS = Object.keys(ITEM_TEXT);
 
   const COMPARISON_QUESTIONS = [
-    { key: "best_pedagogical_quality", label: "Best Pedagogical Quality" },
-    { key: "best_mathematical_correctness", label: "Best Mathematical Correctness" },
-    { key: "best_visualization_quality", label: "Best Visualization Quality" },
-    { key: "best_interactive_quality", label: "Best Interactive Explanation Quality" },
-    { key: "preferred_overall", label: "Overall preference" },
+    { key: "best_pedagogical_quality", label: "Best Pedagogical Quality", text: "Which lesson has the best Pedagogical Quality?" },
+    { key: "best_mathematical_correctness", label: "Best Mathematical Correctness", text: "Which lesson has the best Mathematical Correctness?" },
+    { key: "best_visual_quality", label: "Best Visual Quality", text: "Which lesson has the best Visual Quality?" },
+    { key: "best_interaction_quality", label: "Best Interaction Quality", text: "Which lesson has the best Interaction Quality?" },
+    { key: "preferred_overall", label: "Overall preference", text: "Overall, which lesson would you prefer to use with your students?" },
   ];
 
   const ASSIGNMENTS_TABLE = "rater_assignments";
@@ -446,12 +446,59 @@
     container.appendChild(panel);
   }
 
-  // Stacked bars: comparison picks per question.
+  // Comparison results: one row per question, pick counts per condition.
   function renderComparisonChart(container) {
     const panel = el("div", "panel");
-    panel.appendChild(el("h2", null, "Comparison picks"));
-    panel.appendChild(el("p", "panel-sub", "How many times each condition was picked as best (one pick per rater per lesson set)."));
-    panel.appendChild(makeLegend());
+    panel.appendChild(el("h2", null, "Comparison results"));
+    panel.appendChild(el("p", "panel-sub",
+      "How many times each condition was picked as best (one pick per rater per lesson set)."));
+
+    const scrollWrap = el("div", "table-scroll");
+    const table = el("table", "dash-table");
+    const thead = el("thead");
+    const headRow = el("tr");
+    headRow.appendChild(el("th", "q-col", "Question"));
+    for (const key of CONDITION_KEYS) {
+      const th = el("th", "num");
+      th.appendChild(condDot(key));
+      th.appendChild(document.createTextNode(CONDITION_META[key].label));
+      headRow.appendChild(th);
+    }
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = el("tbody");
+    for (const q of COMPARISON_QUESTIONS) {
+      const counts = {};
+      let total = 0;
+      for (const key of CONDITION_KEYS) counts[key] = 0;
+      for (const row of comparisons) {
+        const pick = row.answers && row.answers[q.key];
+        if (counts[pick] != null) { counts[pick]++; total++; }
+      }
+
+      const tr = el("tr");
+      tr.appendChild(el("td", "q-col", q.text));
+      const best = Math.max.apply(null, CONDITION_KEYS.map((key) => counts[key]));
+      for (const key of CONDITION_KEYS) {
+        const td = el("td", "num", total ? String(counts[key]) : "—");
+        if (total && counts[key] === best && best > 0) td.classList.add("top-pick");
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    scrollWrap.appendChild(table);
+    panel.appendChild(scrollWrap);
+    container.appendChild(panel);
+  }
+
+  // Per-submission comparison answers: one row per rater × lesson set.
+  function renderComparisonTable(container) {
+    const panel = el("div", "panel");
+    panel.appendChild(el("h2", null, "Comparison answers"));
+    panel.appendChild(el("p", "panel-sub",
+      "Each rater's pick per comparison question, for every lesson set they compared."));
 
     if (!comparisons.length) {
       panel.appendChild(el("p", "stack-empty", "No comparison submissions yet."));
@@ -459,36 +506,44 @@
       return;
     }
 
-    const chart = el("div", "stack-chart");
+    const scrollWrap = el("div", "table-scroll");
+    const table = el("table", "dash-table");
+    const thead = el("thead");
+    const headRow = el("tr");
+    headRow.appendChild(el("th", null, "Rater"));
+    headRow.appendChild(el("th", null, "Lesson set"));
     for (const q of COMPARISON_QUESTIONS) {
-      const counts = {};
-      for (const key of CONDITION_KEYS) counts[key] = 0;
-      let total = 0;
-      for (const row of comparisons) {
-        const pick = row.answers && row.answers[q.key];
-        if (counts[pick] != null) { counts[pick]++; total++; }
-      }
-
-      const rowEl = el("div", "stack-row");
-      rowEl.appendChild(el("div", "stack-label", q.label));
-      const track = el("div", "stack-track");
-      if (!total) {
-        track.appendChild(el("span", "stack-empty", "No responses"));
-      } else {
-        for (const key of CONDITION_KEYS) {
-          if (!counts[key]) continue;
-          const seg = el("div", "stack-seg", String(counts[key]));
-          seg.style.background = CONDITION_META[key].color;
-          seg.style.flex = String(counts[key]);
-          attachTooltip(seg, () =>
-            CONDITION_META[key].label + ": " + counts[key] + " of " + total + " picks");
-          track.appendChild(seg);
-        }
-      }
-      rowEl.appendChild(track);
-      chart.appendChild(rowEl);
+      headRow.appendChild(el("th", null, q.label.replace(/^Best /, "")));
     }
-    panel.appendChild(chart);
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    function pickCell(pick) {
+      const td = el("td");
+      if (pick && CONDITION_META[pick]) {
+        td.appendChild(condDot(pick));
+        td.appendChild(document.createTextNode(CONDITION_META[pick].label));
+      } else {
+        td.textContent = "—";
+      }
+      return td;
+    }
+
+    const tbody = el("tbody");
+    for (const row of comparisons) {
+      const tr = el("tr");
+      tr.appendChild(el("td", null, row.rater_id));
+      const pidNum = parseInt(String(row.participant_id).replace(/\D/g, ""), 10);
+      tr.appendChild(el("td", "muted",
+        row.participant_id + (TOPICS[pidNum] ? " — " + TOPICS[pidNum] : "")));
+      for (const q of COMPARISON_QUESTIONS) {
+        tr.appendChild(pickCell(row.answers && row.answers[q.key]));
+      }
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    scrollWrap.appendChild(table);
+    panel.appendChild(scrollWrap);
     container.appendChild(panel);
   }
 
@@ -827,7 +882,6 @@
     const table = el("table", "dash-table");
     const thead = el("thead");
     const headRow = el("tr");
-    headRow.appendChild(el("th", null, "Item"));
     headRow.appendChild(el("th", "q-col", "Statement"));
     for (const key of CONDITION_KEYS) {
       const th = el("th", "num");
@@ -842,7 +896,6 @@
     for (const dim of DIMENSIONS) {
       for (const item of dim.items) {
         const tr = el("tr");
-        tr.appendChild(el("td", "muted", item.toUpperCase()));
         tr.appendChild(el("td", "q-col", ITEM_TEXT[item]));
         for (const cond of CONDITION_KEYS) {
           const rows = ratings.filter((r) => r.condition === cond);
@@ -967,12 +1020,12 @@
 
   function exportRatingsCsv() {
     const header = ["rater_id", "participant_id", "condition", "lesson_label", "lesson_url"]
-      .concat(ALL_ITEMS).concat(["created_at", "updated_at"]);
+      .concat(ALL_ITEMS).concat(["time_spent_s", "created_at", "updated_at"]);
     const rows = [header];
     for (const r of ratings) {
       rows.push([r.rater_id, r.participant_id, r.condition, r.lesson_label, r.lesson_url]
         .concat(ALL_ITEMS.map((item) => (r.answers && r.answers[item]) || ""))
-        .concat([r.created_at, r.updated_at]));
+        .concat([(r.answers && r.answers.time_spent_s) || "", r.created_at, r.updated_at]));
     }
     downloadCsv("lesson_evaluations.csv", rows);
   }
@@ -1019,6 +1072,7 @@
     renderAssignmentsPanel(appEl);
     renderMeansChart(appEl);
     renderComparisonChart(appEl);
+    renderComparisonTable(appEl);
     renderRaterTable(appEl);
     renderCoverageTable(appEl);
     renderItemTable(appEl);

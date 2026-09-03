@@ -44,40 +44,40 @@
       key: "pedagogical_quality",
       label: "Pedagogical Quality",
       items: [
-        { key: "pq1", text: "The lesson is appropriate for the intended grade level." },
-        { key: "pq2", text: "The lesson introduces concepts in a logical sequence." },
-        { key: "pq3", text: "The lesson encourages active exploration of the concept." },
-        { key: "pq4", text: "The relationship between the interactions and the mathematical ideas is clearly explained." },
+        { key: "q13", text: "The lesson is appropriate for the intended grade level." },
+        { key: "q14", text: "The lesson introduces concepts in a logical sequence." },
+        { key: "q15", text: "The relationship between the interactions and the mathematical ideas is clearly explained." },
+        { key: "q16", text: "The lesson clearly introduces the mathematical concept." },
       ],
     },
     {
       key: "mathematical_correctness",
       label: "Mathematical Correctness",
       items: [
-        { key: "mc1", text: "The mathematical concepts are presented accurately." },
-        { key: "mc2", text: "The formulas and equations are correct." },
-        { key: "mc3", text: "The visualizations accurately represent the underlying mathematics." },
-        { key: "mc4", text: "The lesson remains mathematically correct across all interaction states." },
+        { key: "q17", text: "The mathematical concepts are presented accurately." },
+        { key: "q18", text: "The formulas and equations are correct." },
+        { key: "q19", text: "The visualizations accurately represent the underlying mathematics." },
+        { key: "q20", text: "The lesson remains mathematically correct across all interaction states." },
       ],
     },
     {
-      key: "visualization_quality",
-      label: "Visualization Quality",
+      key: "visual_quality",
+      label: "Visual Quality",
       items: [
-        { key: "vq1", text: "The lesson uses appropriate visualizations (e.g., graphs, diagrams, or simulations) for the concept being taught." },
-        { key: "vq2", text: "The visualizations are clear and easy to understand." },
-        { key: "vq3", text: "The visualizations are well designed (layout, colors, and labels)." },
-        { key: "vq4", text: "The explanations in the lesson are clearly linked with the visualizations." },
+        { key: "q21", text: "The lesson used appropriate visualizations (e.g., graphs, diagrams or simulations)." },
+        { key: "q22", text: "The visual design effectively highlights important mathematical concepts and relationships." },
+        { key: "q23", text: "The visual representation is clear and easy to understand." },
+        { key: "q24", text: "The lesson’s visualizations are accurate and free of errors." },
       ],
     },
     {
-      key: "interactive_explanation_quality",
-      label: "Interactive Explanation Quality",
+      key: "interaction_quality",
+      label: "Interaction Quality",
       items: [
-        { key: "ie1", text: "The interactive controls are relevant to the concept being taught." },
-        { key: "ie2", text: "Manipulating the controls helps reveal important mathematical relationships." },
-        { key: "ie3", text: "Changes in the visualization are easy to interpret." },
-        { key: "ie4", text: "The interactions help connect abstract mathematical ideas with their visual representations." },
+        { key: "q25", text: "The interactive controls are relevant to the concept being taught." },
+        { key: "q26", text: "Manipulating the controls helps reveal important mathematical relationships." },
+        { key: "q27", text: "The interactions help connect abstract mathematical ideas with their visual representations." },
+        { key: "q28", text: "Changes in the visualization are easy to interpret." },
       ],
     },
   ];
@@ -85,8 +85,8 @@
   const COMPARISON_QUESTIONS = [
     { key: "best_pedagogical_quality", text: "Which lesson has the best Pedagogical Quality?" },
     { key: "best_mathematical_correctness", text: "Which lesson has the best Mathematical Correctness?" },
-    { key: "best_visualization_quality", text: "Which lesson has the best Visualization Quality?" },
-    { key: "best_interactive_quality", text: "Which lesson has the best Interactive Explanation Quality?" },
+    { key: "best_visual_quality", text: "Which lesson has the best Visual Quality?" },
+    { key: "best_interaction_quality", text: "Which lesson has the best Interaction Quality?" },
     { key: "preferred_overall", text: "Overall, which lesson would you prefer to use with your students?" },
   ];
 
@@ -117,7 +117,7 @@
   // the entered rater ID and start over instead of resuming.
   const FRESH_START = new URLSearchParams(window.location.search).get("fresh") === "1";
 
-  // state = { rater, pos, ratings: {pid: {condition: {pq1..ie4}}},
+  // state = { rater, pos, ratings: {pid: {condition: {q13..q28}}},
   //           comparisons: {pid: {...}}, synced: {key: bool}, startedAt }
   // pos: -1 = intro (never stored), 0..totalSteps-1 = working, totalSteps = done.
   let state = null;
@@ -367,6 +367,10 @@
     ].forEach((t) => list.appendChild(el("li", null, t)));
     card.appendChild(list);
 
+    card.appendChild(el("p", "monitor-note",
+      "Please note: your activity during the evaluation (such as the time spent " +
+      "on each lesson) is recorded to help us verify the validity of the ratings."));
+
     const label = el("label", "field-label", "Rater ID");
     label.setAttribute("for", "pid-input");
     card.appendChild(label);
@@ -558,6 +562,8 @@
     const pane = el("div", "question-pane");
     const scroll = el("div", "question-scroll");
 
+    const stepShownAt = Date.now();
+
     scroll.appendChild(el("h2", null,
       "Rate Lesson " + lesson.label + " (" + (info.sub + 1) + " of 3)"));
     scroll.appendChild(el("p", "pane-sub",
@@ -602,7 +608,19 @@
     nav.nextBtn.textContent =
       info.sub === 2 ? "Next: Comparison →" : "Next: Lesson " + LABELS[info.sub + 1] + " →";
 
-    nav.backBtn.addEventListener("click", () => goTo(state.pos - 1));
+    // Accumulated seconds this rater spent on this lesson's rating step,
+    // stored alongside the answers (validity check for the monitoring notice).
+    function logTimeSpent() {
+      answers.time_spent_s =
+        (answers.time_spent_s || 0) + Math.round((Date.now() - stepShownAt) / 1000);
+      state.synced[ratingSyncKey(info.pid, lesson.condition)] = false;
+      saveState();
+    }
+
+    nav.backBtn.addEventListener("click", () => {
+      logTimeSpent();
+      goTo(state.pos - 1);
+    });
 
     nav.nextBtn.addEventListener("click", async () => {
       const missing = [];
@@ -623,6 +641,7 @@
       }
       validation.textContent = "";
 
+      logTimeSpent();
       nav.nextBtn.disabled = true;
       nav.status.className = "status";
       nav.status.textContent = "Saving…";

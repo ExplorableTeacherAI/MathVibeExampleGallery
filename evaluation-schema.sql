@@ -33,7 +33,7 @@ create table if not exists public.lesson_evaluations (
   condition text not null,                 -- "full" | "no-design" | "no-edits"
   lesson_label text not null,              -- blinded label shown: "A" | "B" | "C"
   lesson_url text not null,
-  answers jsonb not null,                  -- {pq1..4, mc1..4, vq1..4, ie1..4}: 1–5
+  answers jsonb not null,                  -- {q13..q28}: 1–5
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (rater_id, participant_id, condition)
