@@ -77,7 +77,7 @@ const CONDITIONS = ["full", "no-design", "no-edits"];
 // double-dash custom domain; remove this entry once the Pages domain is
 // corrected to c13-no-design.mathvibe.space.
 const URL_OVERRIDES = {
-  "c13-no-design": "https://c13--no-design.mathvibe.space/",
+  "c13-no-design": "https://c13-no-design.mathvibe.space/",
 };
 
 // Extra examples created for illustration (outside the study). Add freely.
