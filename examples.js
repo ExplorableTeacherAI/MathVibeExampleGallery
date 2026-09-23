@@ -16,6 +16,16 @@
 
 // Section definitions, in display order.
 const GROUPS = {
+  "illustrative": {
+    label: "Illustrative Examples — Mathematics",
+    description:
+      "Examples created by the authors to illustrate the capabilities of the system.",
+  },
+  "other-domains": {
+    label: "Applicability in Other Domains",
+    description:
+      "Examples showing that the system generalizes beyond mathematics to other subjects.",
+  },
   "full": {
     label: "User Study — Full System",
     description:
@@ -30,16 +40,6 @@ const GROUPS = {
     label: "User Study — No Edits",
     description:
       "Lessons created with chat-only editing (no visual cards or direct edits).",
-  },
-  "illustrative": {
-    label: "Illustrative Examples — Mathematics",
-    description:
-      "Examples created by the authors to illustrate the capabilities of the system.",
-  },
-  "other-domains": {
-    label: "Applicability in Other Domains",
-    description:
-      "Examples showing that the system generalizes beyond mathematics to other subjects.",
   },
 };
 
@@ -94,6 +94,13 @@ const ILLUSTRATIVE_EXAMPLES = [
     url: "https://circle-theorems.mathvibe.space/",
     group: "illustrative",
     topic: "Mathematics",
+    notes: "",
+  },
+  {
+    title: "Introduction to Electron Configurations",
+    url: "https://introduction-to-electron-configurations.mathvibe.space/",
+    group: "other-domains",
+    topic: "Chemistry",
     notes: "",
   },
   {
